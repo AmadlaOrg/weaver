@@ -1,2 +1,2 @@
 # atw
-💻Amadla Templae Weaver💻
+💻Amadla Template Weaver💻
