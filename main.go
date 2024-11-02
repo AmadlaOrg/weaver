@@ -7,8 +7,8 @@ import (
 	"log"
 )
 
-const appName = "atw"
-const appTitleName = "ATW"
+const appName = "weaver"
+const appTitleName = "weaver"
 const version = "1.0.0"
 
 var rootCmd = &cobra.Command{
