@@ -1,4 +1,4 @@
-module github.com/AmadlaOrg/atw
+module github.com/AmadlaOrg/weaver
 
 go 1.23.2
 
