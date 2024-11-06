@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/AmadlaOrg/atw/cmd"
+	"github.com/AmadlaOrg/weaver/cmd"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -27,6 +27,7 @@ var versionCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(cmd.TemplateCmd)
 	rootCmd.AddCommand(cmd.SettingsCmd)
 }
 

@@ -8,6 +8,8 @@ import (
 )
 
 type ITemplate interface {
+	ListTemplates()
+	Weave(templatePaths string, data any)
 }
 
 type STemplate struct {
@@ -20,7 +22,7 @@ func (s *STemplate) ListTemplates() {
 }
 
 // Weave
-func (s *STemplate) Weave(templatePaths string, data any) string {
+func (s *STemplate) Weave(templatePaths string, data any) {
 
 	funcMap := template.FuncMap{
 		"hery": s.Hery.HeryFunc,
@@ -31,7 +33,7 @@ func (s *STemplate) Weave(templatePaths string, data any) string {
 	tmpl, err := template.New("config").Funcs(funcMap).ParseFiles(templatePaths)
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
-		return ""
+		return
 	}
 
 	err = tmpl.Execute(os.Stdout, data)
