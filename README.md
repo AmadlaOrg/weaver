@@ -9,6 +9,7 @@ generated template in a stdout or file(s).
 
 ## How it works
 
+## 🕹️ Usage
 ### Help
 ```bash
 weaver --help|-h
