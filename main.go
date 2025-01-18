@@ -8,7 +8,7 @@ import (
 )
 
 const appName = "weaver"
-const appTitleName = "weaver"
+const appTitleName = "Weaver"
 const version = "1.0.0"
 
 var rootCmd = &cobra.Command{
@@ -27,7 +27,7 @@ var versionCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(cmd.TemplateCmd)
+	//rootCmd.AddCommand(cmd.TemplateCmd)
 	rootCmd.AddCommand(cmd.SettingsCmd)
 }
 

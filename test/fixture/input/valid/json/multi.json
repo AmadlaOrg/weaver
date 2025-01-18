@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "_entity": "github.com/AmadlaOrg/Entity@latest",
+    "_body": {
+      "name": "RandomName",
+      "description": "Some description.",
+      "category": "QA"
+    }
+  },
+  "_body": {
+    "subject": "Some random subject.",
+    "listing": [
+      "Apple",
+      "Orange",
+      "Grape"
+    ],
+    "external": {
+      "_entity": "github.com/AmadlaOrg/QAFixturesSubEntityWithMultiSubEntities@latest",
+      "_body": {
+        "message": "Some message..."
+      }
+    },
+    "external-list": [
+      {
+        "_entity": "github.com/AmadlaOrg/QAFixturesSubEntityWithMultiSubEntities@latest",
+        "_body": {
+          "message": "Another random message."
+        }
+      },
+      {
+        "_entity": "github.com/AmadlaOrg/QAFixturesSubEntityWithMultiSubEntities@latest",
+        "_body": {
+          "message": "Again, another random message."
+        }
+      },
+      {
+        "_entity": "github.com/AmadlaOrg/QAFixturesEntityMultipleTagVersion@latest",
+        "_body": {
+          "title": "Hello World!"
+        }
+      },
+      {
+        "_entity": "github.com/AmadlaOrg/QAFixturesEntityPseudoVersion@latest",
+        "_body": {
+          "name": "John Doe"
+        }
+      }
+    ]
+  }
+}

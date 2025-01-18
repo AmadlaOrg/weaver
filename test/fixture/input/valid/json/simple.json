@@ -1,0 +1,12 @@
+{
+  "_entity": "github.com/AmadlaOrg/Entity@latest",
+  "_body": {
+    "name": "Entity",
+    "description": "The root Entity definition.",
+    "category": "General",
+    "tags": [
+      "main",
+      "master"
+    ]
+  }
+}

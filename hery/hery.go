@@ -7,9 +7,9 @@ type IHery interface {
 type SHery struct{}
 
 func (s *SHery) HeryFunc(query string) (string, error) {
-	result, err := herypkg.ExecuteQuery(query)
+	/*result, err := herypkg.ExecuteQuery(query)
 	if err != nil {
 		return "", err
-	}
-	return result, nil
+	}*/
+	return "result", nil
 }

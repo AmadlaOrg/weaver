@@ -1,6 +1,6 @@
 package cmd
 
-import (
+/*import (
 	"github.com/AmadlaOrg/weaver/template"
 	"github.com/spf13/cobra"
 )
@@ -22,4 +22,4 @@ var TemplateCmd = &cobra.Command{
 		templateService.ListTemplates()
 		//templateService.Weave()
 	},
-}
+}*/

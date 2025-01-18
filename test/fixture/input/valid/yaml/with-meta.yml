@@ -1,0 +1,9 @@
+---
+_meta:
+  _entity: "github.com/AmadlaOrg/Entity@latest"
+  _body:
+    name: QAFixturesSubEntityWithMultiSubEntities
+    description: QA Fixtures Sub Entity With Multi-Sub Entities
+    category: QA
+_body:
+  message: Some random massage.
