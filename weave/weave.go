@@ -13,8 +13,8 @@ type IWeave interface {
 
 type SWeave struct{}
 
-func (s *SWeave) Do(tmplPath, data string) string {
-	tmpl, err := template.ParseFiles(tmplPath)
+func (s *SWeave) Do(data string, tmplPaths ...string) (string, error) {
+	tmpl, err := template.ParseFiles(tmplPaths...)
 	if err != nil {
 		panic(err)
 	}
