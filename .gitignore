@@ -24,13 +24,11 @@ go.work.sum
 # env file
 .env
 
-# Editor
+# Editors
 .idea/
 
-Makefile
-tests.sh
-
 # Build
-weaver
+bin/
 
+weaver
 allcode.txt

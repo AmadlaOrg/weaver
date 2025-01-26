@@ -1,6 +1,6 @@
 <img src=".assets/weaver.jpg" alt="Electronics photo" style="width: 400px;" align="right">
 
-# weaver 🧶
+# `weaver` 🧶
 🧶 Amadla Template Generator 🧶
 
 It is simple CLI application that takes data from an entity, JSON file or a stdin and then from the templates that were

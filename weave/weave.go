@@ -1,38 +1,56 @@
 package weave
 
 import (
-	"encoding/json"
-	"fmt"
-	"gopkg.in/yaml.v3"
+	"errors"
+	"io"
 	"text/template"
 )
 
 type IWeave interface {
-	Do(data string) string
+	Do() error
 }
 
-type SWeave struct{}
+type SWeave struct {
+	tmplFile string
+	input    io.Reader
+	output   *io.Writer
+}
 
-func (s *SWeave) Do(tmplPath, data string) string {
-	tmpl, err := template.ParseFiles(tmplPath)
+var (
+	templateParseFiles = template.ParseFiles
+	ioReadAll          = io.ReadAll
+)
+
+// Do process the template with all data loaded into memory
+func (s *SWeave) Do() error {
+	// Open the template file
+	tmpl, err := templateParseFiles(s.tmplFile)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-}
-
-func parse(input string) (map[string]interface{}, error) {
-	// Try parsing as JSON
-	var data map[string]interface{}
-	if err := json.Unmarshal([]byte(input), &data); err == nil {
-		return data, nil
+	// Read the input data
+	dataBytes, err := ioReadAll(s.input)
+	if err != nil {
+		return err
 	}
 
-	// If JSON parsing fails, try parsing as YAML
-	if err := yaml.Unmarshal([]byte(input), &data); err == nil {
-		return data, nil
+	// Parse the input data
+	data, err := parseData(dataBytes)
+	if err != nil {
+		return err
 	}
 
-	// Return an error if neither JSON nor YAML parsing succeeds
-	return nil, fmt.Errorf("input is neither valid JSON nor YAML")
+	if len(data) == 0 {
+		return errors.New("no valid data found in input")
+	}
+
+	// Process the entire dataset
+	for _, item := range data {
+		if err := tmpl.Execute(*s.output, item); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
