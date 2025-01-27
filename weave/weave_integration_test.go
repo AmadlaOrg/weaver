@@ -33,14 +33,22 @@ func TestSWeave_DoWithJSONStringToFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	defer os.Remove(tempFile.Name())
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			t.Fatalf("Failed to remove temp file: %v", err)
+		}
+	}(tempFile.Name())
 
 	// Call Do method
 	err = NewWeaveService(tmplPath, bytes.NewReader([]byte(input)), tempFile).Do()
 	if err != nil {
 		t.Fatalf("Do method failed: %v", err)
 	}
-	tempFile.Close()
+	err = tempFile.Close()
+	if err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	// Validate output file content
 	output, err := os.ReadFile(tempFile.Name())
@@ -130,13 +138,21 @@ func TestSWeave_DoWithJSONFileToFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp input file: %v", err)
 	}
-	defer os.Remove(inputFile.Name())
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			t.Fatalf("Failed to remove temp file: %v", err)
+		}
+	}(inputFile.Name())
 
 	if _, err := inputFile.WriteString(input); err != nil {
 		t.Fatalf("Failed to write to temp input file: %v", err)
 	}
-	inputFile.Close()
-	
+	err = inputFile.Close()
+	if err != nil {
+		t.Fatalf("Failed to close temp input file: %v", err)
+	}
+
 	tmplPath, err := filepath.Abs(filepath.Join(testSimpleFixturePath, "generic.tmpl"))
 	if err != nil {
 		t.Fatalf("Failed to get template path: %v", err)
@@ -147,21 +163,34 @@ func TestSWeave_DoWithJSONFileToFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	defer os.Remove(tempFile.Name())
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			t.Fatalf("Failed to remove temp file: %v", err)
+		}
+	}(tempFile.Name())
 
 	// Open the input file
 	inputHandle, err := os.Open(inputFile.Name())
 	if err != nil {
 		t.Fatalf("Failed to open input file: %v", err)
 	}
-	defer inputHandle.Close()
+	defer func(inputHandle *os.File) {
+		err := inputHandle.Close()
+		if err != nil {
+			t.Fatalf("Failed to close input file: %v", err)
+		}
+	}(inputHandle)
 
 	// Call Do method
 	err = NewWeaveService(tmplPath, inputHandle, tempFile).Do()
 	if err != nil {
 		t.Fatalf("Do method failed: %v", err)
 	}
-	tempFile.Close()
+	err = tempFile.Close()
+	if err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	// Validate output file content
 	output, err := os.ReadFile(tempFile.Name())
