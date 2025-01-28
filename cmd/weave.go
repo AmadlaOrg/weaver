@@ -26,9 +26,9 @@ var (
 	// WeaveCmd sets up the weave command
 	WeaveCmd = &cobra.Command{
 		Use:   "weave",
-		Short: "Execute the weave process using a specified template and data",
-		Long:  `Execute the weave process using a specified template and data`,
-		Run:   runWeave,
+		Short: "From entity to output using a template",
+		//Long:  `Execute the weave process using a specified template and data`,
+		Run: runWeave,
 	}
 )
 
