@@ -27,7 +27,7 @@ var versionCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
-	//rootCmd.AddCommand(cmd.TemplateCmd)
+	rootCmd.AddCommand(cmd.WeaveCmd)
 	rootCmd.AddCommand(cmd.SettingsCmd)
 }
 
