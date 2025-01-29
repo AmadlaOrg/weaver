@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"github.com/AmadlaOrg/LibraryUtils/file"
 	"github.com/AmadlaOrg/weaver/weave"
@@ -19,7 +18,6 @@ var (
 	// Functions
 	osOpen               = os.Open
 	osCreate             = os.Create
-	osStat               = os.Stat
 	fileIsFile           = file.IsFile
 	weaveNewWeaveService = weave.NewWeaveService
 
@@ -65,14 +63,15 @@ func runWeave(cmd *cobra.Command, args []string) {
 	}
 
 	// 3. Validates what was passed in the template flag
-	if _, err := fileIsFile(templatePath); err != nil {
+	// TODO: To be tested but this might not be needed:
+	/*if _, err := fileIsFile(templatePath); err != nil {
 		if errors.Is(err, file.ErrorIsDir) {
 			cmd.Println("Template path given is a directory, expected a template file.")
 		} else {
 			cmd.Println("The template file does not exist.")
 		}
 		return
-	}
+	}*/
 
 	// 4. Handle input
 	//
