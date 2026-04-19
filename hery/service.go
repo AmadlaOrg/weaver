@@ -1,6 +1,6 @@
 package hery
 
-// NewHeryService to set up the hery service
-func NewHeryService() IHery {
-	return &SHery{}
+// New creates a new hery service.
+func New() Service {
+	return &service{}
 }

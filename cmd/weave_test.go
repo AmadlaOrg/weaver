@@ -16,7 +16,7 @@ func TestRunWeave(t *testing.T) {
 		internalFileIsFile           func(string) (bool, error)
 		internalOsOpen               func(string) (*os.File, error)
 		internalOsCreate             func(string) (*os.File, error)
-		internalWeaveNewWeaveService func(string, io.Reader, io.Writer) weave.IWeave
+		internalWeaveNew func(string, io.Reader, io.Writer) weave.Weaver
 		expectedCmd                  *cobra.Command
 	}{
 		{
@@ -32,7 +32,7 @@ func TestRunWeave(t *testing.T) {
 			internalOsCreate: func(string) (*os.File, error) {
 				return nil, nil
 			},
-			internalWeaveNewWeaveService: func(string, io.Reader, io.Writer) weave.IWeave {
+			internalWeaveNew: func(string, io.Reader, io.Writer) weave.Weaver {
 				return nil
 			},
 			expectedCmd: &cobra.Command{},

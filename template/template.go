@@ -7,22 +7,23 @@ import (
 	"text/template"
 )
 
-type ITemplate interface {
+// Service defines the template operations interface.
+type Service interface {
 	ListTemplates()
 	Weave(templatePaths string, data any)
 }
 
-type STemplate struct {
-	Hery hery.IHery
+type service struct {
+	Hery hery.Service
 }
 
 // ListTemplates
-func (s *STemplate) ListTemplates() {
+func (s *service) ListTemplates() {
 
 }
 
 // Weave
-func (s *STemplate) Weave(templatePaths string, data any) {
+func (s *service) Weave(templatePaths string, data any) {
 
 	funcMap := template.FuncMap{
 		"hery": s.Hery.HeryFunc,

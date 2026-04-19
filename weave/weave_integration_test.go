@@ -11,7 +11,7 @@ const (
 	testSimpleFixturePath = "../test/fixture/simple"
 )
 
-func TestSWeave_DoWithJSONStringToFile(t *testing.T) {
+func TestWeaver_DoWithJSONStringToFile(t *testing.T) {
 	input := `[
 		{"Key": "Key1", "Value": "Value1"},
 		{"Key": "Key2", "Value": "Value2"},
@@ -41,7 +41,7 @@ func TestSWeave_DoWithJSONStringToFile(t *testing.T) {
 	}(tempFile.Name())
 
 	// Call Do method
-	err = NewWeaveService(tmplPath, bytes.NewReader([]byte(input)), tempFile).Do()
+	err = New(tmplPath, bytes.NewReader([]byte(input)), tempFile).Do()
 	if err != nil {
 		t.Fatalf("Do method failed: %v", err)
 	}
@@ -62,7 +62,7 @@ func TestSWeave_DoWithJSONStringToFile(t *testing.T) {
 	}
 }
 
-func TestSWeave_DoWithJSONStringToStdout(t *testing.T) {
+func TestWeaver_DoWithJSONStringToStdout(t *testing.T) {
 	input := `[
 		{"Key": "Key1", "Value": "Value1"},
 		{"Key": "Key2", "Value": "Value2"},
@@ -78,7 +78,7 @@ func TestSWeave_DoWithJSONStringToStdout(t *testing.T) {
 	var stdout bytes.Buffer
 
 	// Call Do method
-	err = NewWeaveService(tmplPath, bytes.NewReader([]byte(input)), &stdout).Do()
+	err = New(tmplPath, bytes.NewReader([]byte(input)), &stdout).Do()
 	if err != nil {
 		t.Fatalf("Do method failed: %v", err)
 	}
@@ -90,7 +90,7 @@ func TestSWeave_DoWithJSONStringToStdout(t *testing.T) {
 	}
 }
 
-func TestSWeave_DoWithYAMLStringToStdout(t *testing.T) {
+func TestWeaver_DoWithYAMLStringToStdout(t *testing.T) {
 	input := `
 - Key: Key1
   Value: Value1
@@ -109,7 +109,7 @@ func TestSWeave_DoWithYAMLStringToStdout(t *testing.T) {
 	var stdout bytes.Buffer
 
 	// Call Do method
-	err = NewWeaveService(tmplPath, bytes.NewReader([]byte(input)), &stdout).Do()
+	err = New(tmplPath, bytes.NewReader([]byte(input)), &stdout).Do()
 	if err != nil {
 		t.Fatalf("Do method failed: %v", err)
 	}
@@ -121,7 +121,7 @@ func TestSWeave_DoWithYAMLStringToStdout(t *testing.T) {
 	}
 }
 
-func TestSWeave_DoWithJSONFileToFile(t *testing.T) {
+func TestWeaver_DoWithJSONFileToFile(t *testing.T) {
 	// Create a temp JSON file
 	input := `[
 		{"Key": "Key1", "Value": "Value1"},
@@ -183,7 +183,7 @@ func TestSWeave_DoWithJSONFileToFile(t *testing.T) {
 	}(inputHandle)
 
 	// Call Do method
-	err = NewWeaveService(tmplPath, inputHandle, tempFile).Do()
+	err = New(tmplPath, inputHandle, tempFile).Do()
 	if err != nil {
 		t.Fatalf("Do method failed: %v", err)
 	}

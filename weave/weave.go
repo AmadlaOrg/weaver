@@ -6,11 +6,12 @@ import (
 	"text/template"
 )
 
-type IWeave interface {
+// Weaver defines the interface for template weaving operations.
+type Weaver interface {
 	Do() error
 }
 
-type SWeave struct {
+type weaver struct {
 	tmplFile string
 	input    io.Reader
 	output   *io.Writer
@@ -22,7 +23,7 @@ var (
 )
 
 // Do process the template with all data loaded into memory
-func (s *SWeave) Do() error {
+func (s *weaver) Do() error {
 	// Open the template file
 	tmpl, err := templateParseFiles(s.tmplFile)
 	if err != nil {

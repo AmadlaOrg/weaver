@@ -2,12 +2,13 @@ package fs
 
 import "os"
 
-type IFs interface {
+// FS defines the file system operations interface.
+type FS interface {
 	OpenDataSource(filePath string) (*os.File, error)
 	OpenOutput(filePath string, append bool) (*os.File, error)
 }
 
-type SFs struct {
+type fsImpl struct {
 	outputFilePerm os.FileMode
 }
 
@@ -18,7 +19,7 @@ var (
 )
 
 // OpenDataSource
-func (s *SFs) OpenDataSource(filePath string) (*os.File, error) {
+func (s *fsImpl) OpenDataSource(filePath string) (*os.File, error) {
 	dataFile, err := osOpen(filePath)
 	if err != nil {
 		return nil, err
@@ -28,7 +29,7 @@ func (s *SFs) OpenDataSource(filePath string) (*os.File, error) {
 }
 
 // OpenOutput
-func (s *SFs) OpenOutput(filePath string, append bool) (*os.File, error) {
+func (s *fsImpl) OpenOutput(filePath string, append bool) (*os.File, error) {
 	var (
 		outputFile *os.File
 		err        error
@@ -39,7 +40,7 @@ func (s *SFs) OpenOutput(filePath string, append bool) (*os.File, error) {
 		outputFile, err = osOpenFile(filePath, os.O_RDONLY|os.O_APPEND, 0666)
 	} else {
 		// TODO: Validate that the directory exists
-		outputFile, err = osCreate("output.txt")
+		outputFile, err = osCreate(filePath)
 	}
 
 	if err != nil {

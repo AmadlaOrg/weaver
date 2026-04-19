@@ -17,8 +17,8 @@ var SettingsCmd = &cobra.Command{
 		}*/
 
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"Setting", "Value"})
-		table.Append([]string{"Collections path", "..."})
+		table.Header("Setting", "Value")
+		table.Append("Collections path", "...")
 
 		/*envList, err := env.List()
 		if err != nil {
@@ -27,7 +27,7 @@ var SettingsCmd = &cobra.Command{
 
 		for _, varName := range envList {
 			val := os.Getenv(varName)
-			table.Append([]string{varName, val})
+			table.Append(varName, val)
 		}*/
 
 		table.Render()

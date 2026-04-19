@@ -28,6 +28,8 @@ var versionCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(cmd.WeaveCmd)
+	rootCmd.AddCommand(cmd.RenderCmd)
+	rootCmd.AddCommand(cmd.PluginsCmd)
 	rootCmd.AddCommand(cmd.SettingsCmd)
 }
 

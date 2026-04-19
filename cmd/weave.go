@@ -19,7 +19,7 @@ var (
 	osOpen               = os.Open
 	osCreate             = os.Create
 	fileIsFile           = file.IsFile
-	weaveNewWeaveService = weave.NewWeaveService
+	weaveNew = weave.New
 
 	// WeaveCmd sets up the weave command
 	WeaveCmd = &cobra.Command{
@@ -91,7 +91,7 @@ func runWeave(cmd *cobra.Command, args []string) {
 		}
 		defer func(file *os.File) {
 			if err := file.Close(); err != nil {
-				cmd.Println("Failed to close entity file: %v\n", err)
+				cmd.Printf("Failed to close entity file: %v\n", err)
 			}
 		}(entityFile)
 
@@ -119,7 +119,7 @@ func runWeave(cmd *cobra.Command, args []string) {
 		defer func(file *os.File) {
 			err := file.Close()
 			if err != nil {
-				cmd.Println("Failed to close output file: %v\n", err)
+				cmd.Printf("Failed to close output file: %v\n", err)
 			}
 		}(outputFile)
 
@@ -128,8 +128,8 @@ func runWeave(cmd *cobra.Command, args []string) {
 	}
 
 	// 6. Execute weaving process
-	err = weaveNewWeaveService(templatePath, input, output).Do()
+	err = weaveNew(templatePath, input, output).Do()
 	if err != nil {
-		cmd.Println("Weave process failed: %v\n", err)
+		cmd.Printf("Weave process failed: %v\n", err)
 	}
 }

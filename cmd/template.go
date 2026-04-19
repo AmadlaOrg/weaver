@@ -18,7 +18,7 @@ var TemplateCmd = &cobra.Command{
 			envVarCollection,
 			"Specify the collection name")
 
-		templateService := template.NewTemplateService()
+		templateService := template.New()
 		templateService.ListTemplates()
 		//templateService.Weave()
 	},
