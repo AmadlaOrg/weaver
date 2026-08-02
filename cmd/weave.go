@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/AmadlaOrg/LibraryUtils/file"
-	"github.com/AmadlaOrg/weaver/weave"
-	"github.com/spf13/cobra"
 	"io"
 	"os"
+
+	"github.com/AmadlaOrg/weaver/weave"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -16,9 +16,8 @@ var (
 	entityPath   string
 
 	// Functions
-	osOpen               = os.Open
-	osCreate             = os.Create
-	fileIsFile           = file.IsFile
+	osOpen   = os.Open
+	osCreate = os.Create
 	weaveNew = weave.New
 
 	// WeaveCmd sets up the weave command
@@ -26,110 +25,88 @@ var (
 		Use:   "weave",
 		Short: "From entity to output using a template",
 		//Long:  `Execute the weave process using a specified template and data`,
-		Run: runWeave,
+		RunE: runWeave,
 	}
 )
 
-// runWeave
-func runWeave(cmd *cobra.Command, args []string) {
-	// 1. Setup of the `weave` flags
-	cmd.Flags().StringVarP(
+func init() {
+	WeaveCmd.Flags().StringVarP(
 		&templatePath,
 		"template",
 		"t",
 		"",
 		"Specify the template file path (required)",
 	)
-	cmd.Flags().StringVarP(
+	WeaveCmd.Flags().StringVarP(
 		&outputPath,
 		"output",
 		"o",
 		"",
 		"Specify the output file path (optional, defaults to stdout)",
 	)
-	cmd.Flags().StringVarP(
+	WeaveCmd.Flags().StringVarP(
 		&entityPath,
 		"entity",
 		"e",
 		"",
 		"Specify the entity file path (optional)",
 	)
+	_ = WeaveCmd.MarkFlagRequired("template")
+}
 
-	// 2. The template flag is required
-	err := cmd.MarkFlagRequired("template")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// 3. Validates what was passed in the template flag
-	// TODO: To be tested but this might not be needed:
-	/*if _, err := fileIsFile(templatePath); err != nil {
-		if errors.Is(err, file.ErrorIsDir) {
-			cmd.Println("Template path given is a directory, expected a template file.")
-		} else {
-			cmd.Println("The template file does not exist.")
-		}
-		return
-	}*/
-
-	// 4. Handle input
+// runWeave
+func runWeave(cmd *cobra.Command, args []string) error {
+	// 1. Handle input
 	//
 	// - By default the input is `os.Stdin`
-	// -
 	var input io.Reader = os.Stdin
 	if entityPath != "" {
-		// 4.2 Opens the entity path given
+		// 1.1 Opens the entity path given
 		entityFile, err := osOpen(entityPath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				cmd.Println("Entity file does not exist")
-			} else {
-				cmd.Printf("Failed to open entity file: %v\n", err)
+				return fmt.Errorf("entity file does not exist: %s", entityPath)
 			}
-			return
+			return fmt.Errorf("failed to open entity file: %w", err)
 		}
 		defer func(file *os.File) {
 			if err := file.Close(); err != nil {
-				cmd.Printf("Failed to close entity file: %v\n", err)
+				cmd.PrintErrf("Failed to close entity file: %v\n", err)
 			}
 		}(entityFile)
 
-		// 4.3 Sets the input variable with the `os.File`
+		// 1.2 Sets the input variable with the `os.File`
 		input = entityFile
 	}
 
-	// 5. Handle output
+	// 2. Handle output
 	//
 	// - By default the output is `os.Stdout`
-	// - The output flag is a path to a file that does not exist (that needs to be created), but it validates that the directory in the path given is valid
-	// - If the file already exist then it asks if the existing output file can be overwritten
+	// - The output flag is a path to a file; the directory in the path must exist
 	var output io.Writer = os.Stdout
 	if outputPath != "" {
-		// 5.1 Create the file for the output
+		// 2.1 Create the file for the output
 		outputFile, err := osCreate(outputPath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				cmd.Println("Directory does not exist")
-			} else {
-				cmd.Printf("Failed to create output file: %v\n", err)
+				return fmt.Errorf("output directory does not exist: %s", outputPath)
 			}
-			return
+			return fmt.Errorf("failed to create output file: %w", err)
 		}
 		defer func(file *os.File) {
-			err := file.Close()
-			if err != nil {
-				cmd.Printf("Failed to close output file: %v\n", err)
+			if err := file.Close(); err != nil {
+				cmd.PrintErrf("Failed to close output file: %v\n", err)
 			}
 		}(outputFile)
 
-		// 5.2 Sets the output variable to the `os.File`
+		// 2.2 Sets the output variable to the `os.File`
 		output = outputFile
 	}
 
-	// 6. Execute weaving process
-	err = weaveNew(templatePath, input, output).Do()
-	if err != nil {
-		cmd.Printf("Weave process failed: %v\n", err)
+	// 3. Execute weaving process
+	if err := weaveNew(templatePath, input, output).Do(); err != nil {
+		return fmt.Errorf("weave process failed: %w", err)
 	}
+
+	return nil
 }

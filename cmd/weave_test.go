@@ -1,48 +1,78 @@
 package cmd
 
 import (
-	"github.com/AmadlaOrg/weaver/weave"
-	"github.com/spf13/cobra"
+	"errors"
 	"io"
-	"os"
 	"testing"
+
+	"github.com/AmadlaOrg/weaver/weave"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestRunWeave(t *testing.T) {
-	tests := []struct {
-		name                         string
-		inputCmd                     *cobra.Command
-		inputArgs                    []string
-		internalFileIsFile           func(string) (bool, error)
-		internalOsOpen               func(string) (*os.File, error)
-		internalOsCreate             func(string) (*os.File, error)
-		internalWeaveNew func(string, io.Reader, io.Writer) weave.Weaver
-		expectedCmd                  *cobra.Command
-	}{
-		{
-			name:      "Test",
-			inputCmd:  &cobra.Command{},
-			inputArgs: []string{},
-			internalFileIsFile: func(string) (bool, error) {
-				return true, nil
-			},
-			internalOsOpen: func(string) (*os.File, error) {
-				return nil, nil
-			},
-			internalOsCreate: func(string) (*os.File, error) {
-				return nil, nil
-			},
-			internalWeaveNew: func(string, io.Reader, io.Writer) weave.Weaver {
-				return nil
-			},
-			expectedCmd: &cobra.Command{},
-		},
+type mockWeaver struct {
+	err error
+}
+
+func (m *mockWeaver) Do() error {
+	return m.err
+}
+
+func resetWeaveFlags() {
+	templatePath = ""
+	outputPath = ""
+	entityPath = ""
+}
+
+func TestWeaveCmd_FlagsRegisteredBeforeRun(t *testing.T) {
+	for _, name := range []string{"template", "output", "entity"} {
+		assert.NotNilf(t, WeaveCmd.Flags().Lookup(name),
+			"flag %q must be registered at init time, not inside Run", name)
+	}
+}
+
+func TestWeaveCmd_Execute(t *testing.T) {
+	origWeaveNew := weaveNew
+	defer func() { weaveNew = origWeaveNew }()
+	defer resetWeaveFlags()
+
+	var capturedTmpl string
+	weaveNew = func(tmpl string, input io.Reader, output io.Writer) weave.Weaver {
+		capturedTmpl = tmpl
+		return &mockWeaver{}
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			runWeave(tt.inputCmd, tt.inputArgs)
-			print(tt.inputCmd.Flags())
-		})
+	WeaveCmd.SetArgs([]string{"-t", "config.tmpl"})
+	err := WeaveCmd.Execute()
+	assert.NoError(t, err)
+	assert.Equal(t, "config.tmpl", capturedTmpl)
+}
+
+func TestWeaveCmd_ExecuteWeaveError(t *testing.T) {
+	origWeaveNew := weaveNew
+	defer func() { weaveNew = origWeaveNew }()
+	defer resetWeaveFlags()
+
+	weaveNew = func(tmpl string, input io.Reader, output io.Writer) weave.Weaver {
+		return &mockWeaver{err: errors.New("template parse failed")}
 	}
+
+	WeaveCmd.SetArgs([]string{"-t", "config.tmpl"})
+	err := WeaveCmd.Execute()
+	assert.Error(t, err, "weave failures must propagate as errors, not exit 0")
+	assert.Contains(t, err.Error(), "template parse failed")
+}
+
+func TestWeaveCmd_ExecuteMissingEntityFile(t *testing.T) {
+	origWeaveNew := weaveNew
+	defer func() { weaveNew = origWeaveNew }()
+	defer resetWeaveFlags()
+
+	weaveNew = func(tmpl string, input io.Reader, output io.Writer) weave.Weaver {
+		t.Fatal("weaveNew must not be called when the entity file cannot be opened")
+		return nil
+	}
+
+	WeaveCmd.SetArgs([]string{"-t", "config.tmpl", "-e", "/nonexistent/entity.yaml"})
+	err := WeaveCmd.Execute()
+	assert.Error(t, err)
 }
